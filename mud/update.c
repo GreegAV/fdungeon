@@ -578,7 +578,7 @@ void gain_condition( CHAR_DATA *ch, int iCond, int64 value )
     switch ( iCond )
     {
       case COND_HUNGER:
-        if (IS_SET(race_table[ch->race].spec,SPEC_NOEAT) || ch->level >= LEVEL_IMMORTAL)
+        if (IS_SET(race_table[ch->race].spec,SPEC_NOEAT) || IS_IMMORTAL(ch))
         {
           ch->pcdata->condition[iCond] = 20;
           return;
@@ -587,7 +587,7 @@ void gain_condition( CHAR_DATA *ch, int iCond, int64 value )
         else stc( "Ты хочешь есть.\n\r",ch );
         break;
       case COND_THIRST:
-        if (IS_SET(race_table[ch->race].spec,SPEC_NODRINK) || ch->level >= LEVEL_IMMORTAL)
+        if (IS_SET(race_table[ch->race].spec,SPEC_NODRINK) || IS_IMMORTAL(ch))
          {
           ch->pcdata->condition[iCond] = 20;
           REM_BIT(ch->act,PLR_MUSTDRINK);
@@ -616,6 +616,7 @@ void mobile_update( void )
   CHAR_DATA *ch_next;
   CHAR_DATA *victim, *v_next;
   EXIT_DATA *pexit;
+  char *msg;
   register int door;
   const int stealer_update=0;
 
@@ -676,7 +677,7 @@ void mobile_update( void )
         raw_kill(victim);
         if (!IS_SET(victim->act,ACT_EXTRACT_CORPSE))
         {
-         act("Тело $C2 мгновенно рассыпается в прах.",ch,NULL,victim,TO_ROOM);
+         act( "Мертвое тело мгновенно рассыпается в прах.", ch, 0, 0,TO_ROOM);
          extract_obj(get_obj_list(ch,"corpse",ch->in_room->contents));
         }
        }
