@@ -321,8 +321,9 @@ void drent_update (CHAR_DATA *ch)
 {
   CHAR_DATA *vch,*vch_next;
 
-  if (ch->pcdata->account<1)
-  {
+  if (ch->race != RACE_DWARF || !IS_IMMORTAL(ch))  {
+    if (ch->pcdata->account < 1)
+    {
     if (ch->gold<1)
     {
       vch_next = ch->next_in_room;
@@ -351,6 +352,7 @@ void drent_update (CHAR_DATA *ch)
   {
     guild_table[guild_lookup("dwarves guild")].gold++;
     ch->pcdata->account--;
+  }
   }
 }
 
@@ -616,7 +618,6 @@ void mobile_update( void )
   CHAR_DATA *ch_next;
   CHAR_DATA *victim, *v_next;
   EXIT_DATA *pexit;
-  char *msg;
   register int door;
   const int stealer_update=0;
 
