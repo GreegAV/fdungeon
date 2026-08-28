@@ -438,7 +438,9 @@ void append_note(NOTE_DATA *pnote)
     do_fprintf( fp, "Text\n%s~\n", pnote->text);
     fclose( fp );
   }
-  // send to tg
+  // send to tg - DISABLED, same reason as the login notification in comm.c:
+  // system() stalls the game loop on a curl call that has no timeout.
+#if 0
   if ( (fp=fopen("send_note.txt","w") ) == NULL ) perror(name);
   else  {
     int exitcode;
@@ -447,6 +449,7 @@ void append_note(NOTE_DATA *pnote)
     exitcode=system("./send_note.sh");
     log_printf ("sent to TG (%d)", exitcode);
   }
+#endif
   fpReserve = fopen( NULL_FILE, "r" );
 }
 
