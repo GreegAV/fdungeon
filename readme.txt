@@ -37,3 +37,16 @@ file which contains some history notes.
 
                                                 Sergii Kulyk aka Saboteur
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+Building and running (Linux):
+
+  make -C mud                # builds mud/rom
+  cp mud/rom areas/          # the server expects to run from areas/
+  cd areas && ./rom 4001     # or use areas/start.sh
+
+Set FD_NO_NOTIFY=1 in the environment to suppress the outgoing Telegram and
+mail notifications - handy for local runs and tests.
+
+  tools/smoke_test.sh        # build, boot the server, walk the login dialog
+
+The same smoke test runs on every push via .github/workflows/ci.yml.
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
