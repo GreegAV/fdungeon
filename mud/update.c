@@ -1309,7 +1309,7 @@ void aggr_update( void )
   CHAR_DATA *wch;
   CHAR_DATA *ch,  *ch_next;
   CHAR_DATA *vch, *vch_next;
-  CHAR_DATA static *wch_next;
+  static CHAR_DATA *wch_next;
   CHAR_DATA *victim;
   AFFECT_DATA af;
 

@@ -5,6 +5,8 @@
 # L_FLAGS
 # --std=gnu89
 # -lcrypt -L../lib -Wl, -E
+CC = gcc
+
 C_FLAGS = -O1 -I/usr/include -I. -DOLD_RAND -Wall -fcommon
 
 L_FLAGS = -Wl,-E -Lcrypt
@@ -16,15 +18,15 @@ O_FILES = act_comm.o act_info.o act_move.o act_obj.o act_wiz.o astellar.o bit.o 
 
 .c.o:
 	@echo -n $<" "
-	@gcc --pipe -c $(C_FLAGS) $<
+	@$(CC) --pipe -c $(C_FLAGS) $<
 
 rom: $(O_FILES)
 	@rm -f rom
 	@echo -e "\nLinking: "
-	gcc --pipe -o rom $(O_FILES) $(L_FLAGS) 
+	$(CC) --pipe -o rom $(O_FILES) $(L_FLAGS) 
 	@chmod 755 rom
 	@echo "Result: "
-	@ls -lsFa rom ../areas/rom
+	@ls -lsFa rom
         
 install: rom
 	rm -f ../areas/rom

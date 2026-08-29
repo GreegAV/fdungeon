@@ -455,7 +455,7 @@ void load_vote()
         votes++;
         break;
       case 'E':
-        if (strcmp(word,"End"));
+        if (strcmp(word,"End")) break;
         fMatch=TRUE;
         break;
       case 'M':
@@ -496,7 +496,7 @@ void load_newspaper(void)
 
   if ((fp=fopen( NEWSPAPER_FILE,"r"))==NULL)
   {
-    log_string("BUG: Loading newapaper: "NEWSPAPER_FILE" not found!");
+    log_string("BUG: Loading newspaper: "NEWSPAPER_FILE" not found!");
     return;
   }
   for (;;)
