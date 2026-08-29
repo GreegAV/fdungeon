@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FDungeon — планувальник екіпіровки</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%2312141a'/%3E%3Ctext x='8' y='12' font-size='11' text-anchor='middle' fill='%23d2a04a' font-family='monospace'%3E%E2%9A%94%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <h1>FDungeon <span class="sub">планувальник екіпіровки</span></h1>
+
+  <div class="controls">
+    <label class="ctl">
+      <span>Рівень</span>
+      <input type="number" id="level" min="1" max="110" value="50">
+    </label>
+
+    <label class="ctl">
+      <span>Alignment</span>
+      <select id="align">
+        <option value="good">good (добро)</option>
+        <option value="neutral" selected>neutral (нейтрал)</option>
+        <option value="evil">evil (зло)</option>
+      </select>
+    </label>
+
+    <label class="ctl">
+      <span>Клас</span>
+      <select id="class"></select>
+    </label>
+
+    <label class="ctl">
+      <span>Стать</span>
+      <select id="sex">
+        <option value="male" selected>чоловік</option>
+        <option value="female">жінка</option>
+      </select>
+    </label>
+
+    <label class="ctl" title="Відсікає низькорівневий мотлох — наприклад речі 0-го рівня, які носять моби">
+      <span>Реч. від рівня</span>
+      <input type="number" id="minlevel" min="0" max="110" value="0">
+    </label>
+
+    <label class="ctl grow">
+      <span>Пошук</span>
+      <input type="search" id="search" placeholder="назва або keyword…">
+    </label>
+
+    <div class="ctl buttons">
+      <button id="autofill" type="button" title="Підібрати найкраще в кожен слот">Автопідбір</button>
+      <button id="clear" type="button">Очистити</button>
+      <button id="share" type="button" title="Скопіювати посилання на цей набір">Посилання</button>
+    </div>
+  </div>
+
+  <details class="areafilter" id="areafilter">
+    <summary>Області <span class="muted" id="areaSummary"></span></summary>
+    <div class="areafilter-body">
+      <div class="areafilter-tools">
+        <input type="search" id="areaSearch" placeholder="фільтр за назвою…">
+        <button type="button" data-area-action="all">Усі</button>
+        <button type="button" data-area-action="none">Жодної</button>
+        <button type="button" data-area-action="reset">За замовчуванням</button>
+        <span class="hint">За замовчуванням вимкнені божественні області:
+          ті, чий діапазон рівнів у <code>Credits</code> починається зі 101+,
+          і ті, що мають <code>Security 9</code> (редагує лише імплементор) —
+          саме там лежать речі з п'ятизначним hitroll.</span>
+      </div>
+      <div id="areaList" class="arealist"></div>
+    </div>
+  </details>
+</header>
+
+<main class="layout">
+
+  <!-- ------------------------------------------------ left: ASCII silhouette -->
+  <section class="panel panel-doll">
+    <h2>Силует</h2>
+    <pre id="doll" class="doll" aria-label="ASCII силует персонажа"></pre>
+    <p class="hint" id="dollHint">Рядок силуету відповідає слоту — клікни, щоб перейти.</p>
+  </section>
+
+  <!-- ------------------------------------------------------ centre: the slots -->
+  <section class="panel panel-slots">
+    <h2>Слоти <span class="muted" id="slotCount"></span></h2>
+    <div id="slots" class="slots"></div>
+  </section>
+
+  <!-- ---------------------------------------------------- right: identify pane -->
+  <section class="panel panel-ident">
+    <h2>Identify</h2>
+    <div id="identify" class="identify">
+      <p class="muted">Обери предмет у будь-якому слоті.</p>
+    </div>
+  </section>
+</main>
+
+<!-- ------------------------------------------------------------ bottom: totals -->
+<footer class="totals" id="totals"></footer>
+
+<div id="loading" class="loading">Завантаження даних areas…</div>
+
+<script src="js/mud.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
