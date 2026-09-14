@@ -25,12 +25,15 @@ make -C "$root/mud" || exit 1
 
 echo "== preparing =="
 mkdir -p "$root/player" "$root/log" "$root/deleted"
-cp "$root/mud/rom" "$root/areas/rom" || exit 1
 
 echo "== booting on port $port =="
+# The server locates its data relative to the working directory, not to the
+# binary, so run mud/rom from areas/ instead of copying it in.  Copying is
+# what start.sh does for the live server, and areas/rom there may well be
+# owned by another user - overwriting it failed with "Permission denied".
 cd "$root/areas" || exit 1
 # FD_NO_NOTIFY keeps the server from calling out to Telegram/mail
-FD_NO_NOTIFY=1 ./rom "$port" > "$log" 2>&1 &
+FD_NO_NOTIFY=1 "$root/mud/rom" "$port" > "$log" 2>&1 &
 pid=$!
 
 for _ in $(seq 1 60); do
