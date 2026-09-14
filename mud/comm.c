@@ -286,7 +286,11 @@ bool notify_disabled( void )
 {
   static int cached = -1;
 
-  if ( cached < 0 ) cached = ( getenv("FD_NO_NOTIFY") != NULL ) ? 1 : 0;
+  // Off unless FD_NOTIFY is set: notify_tg.sh / send_note.sh run curl with no
+  // timeout from system(), which stalls the single-threaded game loop whenever
+  // Telegram is unreachable -- the same reason the login and note call sites
+  // are compiled out entirely.
+  if ( cached < 0 ) cached = ( getenv("FD_NOTIFY") != NULL ) ? 0 : 1;
   return cached ? TRUE : FALSE;
 }
 
