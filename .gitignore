@@ -8,13 +8,11 @@ areas/stderr.log
 areas/send_note.txt
 areas/rom
 areas/who.htm
+# Runtime data written by the server itself. log/log.fil stays tracked so the
+# directory exists after a fresh clone.
 log/*.log
-log/notes.not
-log/complain.not
-log/bugreport.not
-log/newspaper.not
-log/offtopics.not
-log/penal.not
+log/*.not
+log/ban.txt
 mud/null.log
 mud/*.o
 mud/*.obj
@@ -22,3 +20,8 @@ mud/rom
 mud/fdungeon.exe
 mud/vc40.pdb
 player/
+
+# IDE / build output
+.idea/
+cmake-build-debug/
+cmake-build-*/

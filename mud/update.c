@@ -321,8 +321,9 @@ void drent_update (CHAR_DATA *ch)
 {
   CHAR_DATA *vch,*vch_next;
 
-  if (ch->pcdata->account<1)
-  {
+  if (ch->race != RACE_DWARF || !IS_IMMORTAL(ch))  {
+    if (ch->pcdata->account < 1)
+    {
     if (ch->gold<1)
     {
       vch_next = ch->next_in_room;
@@ -351,6 +352,7 @@ void drent_update (CHAR_DATA *ch)
   {
     guild_table[guild_lookup("dwarves guild")].gold++;
     ch->pcdata->account--;
+  }
   }
 }
 
@@ -578,7 +580,7 @@ void gain_condition( CHAR_DATA *ch, int iCond, int64 value )
     switch ( iCond )
     {
       case COND_HUNGER:
-        if (IS_SET(race_table[ch->race].spec,SPEC_NOEAT) || ch->level >= LEVEL_IMMORTAL)
+        if (IS_SET(race_table[ch->race].spec,SPEC_NOEAT) || IS_IMMORTAL(ch))
         {
           ch->pcdata->condition[iCond] = 20;
           return;
@@ -587,7 +589,7 @@ void gain_condition( CHAR_DATA *ch, int iCond, int64 value )
         else stc( "Ты хочешь есть.\n\r",ch );
         break;
       case COND_THIRST:
-        if (IS_SET(race_table[ch->race].spec,SPEC_NODRINK) || ch->level >= LEVEL_IMMORTAL)
+        if (IS_SET(race_table[ch->race].spec,SPEC_NODRINK) || IS_IMMORTAL(ch))
          {
           ch->pcdata->condition[iCond] = 20;
           REM_BIT(ch->act,PLR_MUSTDRINK);

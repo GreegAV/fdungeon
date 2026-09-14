@@ -371,8 +371,12 @@ void string_show (CHAR_DATA * ch, const char * strch)
 // -----------------------------------------------------------------------
 const char * string_format (const char * oldstring)
 {
-  char xbuf[MAX_STRING_LENGTH];
-  char xbuf2[MAX_STRING_LENGTH], *p;
+  // Both passes below make the text longer than the input: the first inserts
+  // spaces after sentence ends, the second inserts "\n\r" every ~77 characters.
+  // Give them twice MAX_STRING_LENGTH and cap the first pass at
+  // MAX_STRING_LENGTH, so the wrapping pass always has room left.
+  char xbuf[MAX_STRING_LENGTH * 2];
+  char xbuf2[MAX_STRING_LENGTH * 2], *p;
   const char *rdesc;
   int i=0;
   bool cap=TRUE;
@@ -381,9 +385,11 @@ const char * string_format (const char * oldstring)
   i=0;
   for (rdesc = oldstring; *rdesc; rdesc++)
   {
+    if (i >= MAX_STRING_LENGTH - 8) break;   // widest single step advances i by 4
+
     if (*rdesc=='\n')
     {
-      if (xbuf[i-1] != ' ')
+      if (i > 0 && xbuf[i-1] != ' ')
       {
         xbuf[i]=' ';
         i++;
@@ -392,7 +398,7 @@ const char * string_format (const char * oldstring)
     else if (*rdesc=='\r') ;
     else if (*rdesc==' ')
     {
-      if (xbuf[i-1] != ' ')
+      if (i > 0 && xbuf[i-1] != ' ')
       {
         xbuf[i]=' ';
         i++;
@@ -400,7 +406,7 @@ const char * string_format (const char * oldstring)
     }
     else if (*rdesc==')')
     {
-      if (xbuf[i-1]==' ' && xbuf[i-2]==' ' &&
+      if (i >= 3 && xbuf[i-1]==' ' && xbuf[i-2]==' ' &&
           (xbuf[i-3]=='.' || xbuf[i-3]=='?' || xbuf[i-3]=='!'))
       {
         xbuf[i-2]=*rdesc;
@@ -415,7 +421,7 @@ const char * string_format (const char * oldstring)
       }
     }
     else if (*rdesc=='.' || *rdesc=='?' || *rdesc=='!') {
-      if (xbuf[i-1]==' ' && xbuf[i-2]==' ' &&
+      if (i >= 3 && xbuf[i-1]==' ' && xbuf[i-2]==' ' &&
           (xbuf[i-3]=='.' || xbuf[i-3]=='?' || xbuf[i-3]=='!')) {
         xbuf[i-2]=*rdesc;
         if (*(rdesc+1) != '\"')
@@ -510,7 +516,7 @@ const char * string_format (const char * oldstring)
 
   strcat(xbuf,p);
 
-  if (xbuf[strlen(xbuf)-2] != '\n')
+  if (strlen(xbuf) < 2 || xbuf[strlen(xbuf)-2] != '\n')
       strcat(xbuf,"\n\r");
 
   free_string(oldstring);
