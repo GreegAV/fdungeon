@@ -2700,13 +2700,8 @@ void nanny (DESCRIPTOR_DATA * d, const char * argument)
 
     wiznet ("$C1 появился в мире.", ch, NULL, WIZ_LOGINS, get_trust (ch)) ;
 
-    // Telegram login notification - DISABLED.
-    // system() blocks the single-threaded game loop until /bin/sh exits, and
-    // notify_tg.sh runs curl against api.telegram.org with no --max-time.
-    // An unreachable Telegram froze the whole MUD for the curl TCP timeout.
-    // FD_NO_NOTIFY (notify_disabled()) still gates the notifications that are
-    // left enabled elsewhere.
-#if 0
+    // notify_tg.sh forks curl into the background, so this system() returns
+    // immediately even when Telegram is unreachable; FD_NO_NOTIFY silences it.
     if (!is_exact_name(ch->name,"Saboteur Prool") && !notify_disabled())
     {
       char command[128];
@@ -2715,7 +2710,6 @@ void nanny (DESCRIPTOR_DATA * d, const char * argument)
       exitcode=system(command);
       log_printf ("sent to TG (%d)", exitcode);
     }
-#endif
 
     // load pet
     if (ch->pet != NULL)
