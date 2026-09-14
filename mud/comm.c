@@ -280,6 +280,16 @@ void segmentation_handler(int sig) { // Crash handler, generate backtrace to std
   exit(1);
 }
 
+/* Outgoing notifications (Telegram, mail) are disabled when FD_NO_NOTIFY is
+   set in the environment. Useful for tests and for offline/local runs. */
+bool notify_disabled( void )
+{
+  static int cached = -1;
+
+  if ( cached < 0 ) cached = ( getenv("FD_NO_NOTIFY") != NULL ) ? 1 : 0;
+  return cached ? TRUE : FALSE;
+}
+
 int main( int argc, char **argv )
 {
   struct timeval now_time;
@@ -349,16 +359,22 @@ int main( int argc, char **argv )
   log_printf("ROM is ready to rock on port %d.", port );
 
   // send start status to telegram
-  fclose(fpReserve);
+  if ( !notify_disabled() )
   {
-    int exitcode;
-    FILE *fp = fopen("send_note.txt","w");
-    do_fprintf( fp, "ROM is started");
-    fclose(fp);
-    exitcode=system("./send_note.sh");
-    log_printf ("sent to TG (%d)", exitcode);
+    FILE *fp;
+
+    fclose(fpReserve);
+    if ( ( fp = fopen("send_note.txt","w") ) == NULL ) perror("send_note.txt");
+    else
+    {
+      int exitcode;
+      do_fprintf( fp, "ROM is started");
+      fclose(fp);
+      exitcode=system("./send_note.sh");
+      log_printf ("sent to TG (%d)", exitcode);
+    }
+    fpReserve = fopen( NULL_FILE, "r" );
   }
-  fpReserve = fopen( NULL_FILE, "r" );
 
   game_loop_unix( control );
 #if !defined( WIN32 )
@@ -917,13 +933,13 @@ void close_socket( DESCRIPTOR_DATA *dclose )
   CHAR_DATA *ch;
   DESCRIPTOR_DATA *d;
 
-  if (dclose->outtop > 0) process_output( dclose, FALSE );
-
   if (!dclose || !IS_VALID(dclose))
   {
     log_printf("BUG - invalid descriptor in close_socket");
     return;
   }
+
+  if (dclose->outtop > 0) process_output( dclose, FALSE );
 
   for (d=descriptor_list;d;d=d->next)
     if (d->snoop_by==dclose) d->snoop_by=NULL;
@@ -953,7 +969,9 @@ void close_socket( DESCRIPTOR_DATA *dclose )
             break;
           }
         }
-        if (!prev) bug( "Close_socket: dclose->character in char_list not found.", 0 );
+        /* only chars that reached CON_PLAYING are linked into char_list */
+        if (!prev && dclose->connected == CON_PLAYING)
+          bug( "Close_socket: dclose->character in char_list not found.", 0 );
       }
       dclose->character=NULL;
       ch->desc=NULL;
@@ -2678,7 +2696,7 @@ void nanny (DESCRIPTOR_DATA * d, const char * argument)
 
     wiznet ("$C1 появился в мире.", ch, NULL, WIZ_LOGINS, get_trust (ch)) ;
 
-    if (!is_exact_name(ch->name,"Saboteur Prool"))
+    if (!is_exact_name(ch->name,"Saboteur Prool") && !notify_disabled())
     {
       char command[128];
       int exitcode;
@@ -3441,7 +3459,7 @@ void gettimeofday( struct timeval *tp, void *tzp )
 int colour( char type, CHAR_DATA *ch, char *string )
 {
   char code[ 20 ];
-  char *p = '\0';
+  char *p = NULL;
 
   if( IS_NPC( ch ) ) return( 0 );
 

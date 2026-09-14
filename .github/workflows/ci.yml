@@ -1,0 +1,31 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  gcc:
+    name: gcc build + smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: make -C mud
+
+      - name: Smoke test
+        run: tools/smoke_test.sh
+
+  clang:
+    name: clang build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          make -C mud CC=clang \
+            C_FLAGS="-O1 -I. -DOLD_RAND -Wall -fcommon \
+                     -Wno-invalid-source-encoding -Wno-deprecated-non-prototype"

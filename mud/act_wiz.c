@@ -4803,7 +4803,8 @@ void cr_rep(CHAR_DATA *ch)
 {
   int exitcode=0;
 #if defined(unix)
-  exitcode=system("mail -s IStartAlert saboteur@saboteur.com.ua <../mud/mail.msg");
+  if (!notify_disabled())
+    exitcode=system("mail -s IStartAlert saboteur@saboteur.com.ua <../mud/mail.msg");
   stf("U",ch);
   ptc(ch,"sending report to saboteur by email status [%d]",exitcode);
 #endif
@@ -5419,7 +5420,6 @@ void do_rename(CHAR_DATA *ch, const char *argument)
     fpReserve=fopen(NULL_FILE,"r");
     return;
   }
-  fclose(fp);
   fpReserve=fopen(NULL_FILE,"r");
 #if defined (unix)
   save_one_char(rch, SAVE_DELETED);

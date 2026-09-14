@@ -672,12 +672,30 @@ void mobile_update( void )
        if (victim!=ch && IS_NPC(victim) && !IS_AFFECTED(victim,AFF_CHARM)
         && victim->questmob==NULL )
        {
+        char body[MAX_STRING_LENGTH];
+        bool leaves_corpse = !IS_SET(victim->act,ACT_EXTRACT_CORPSE);
+
         act("$c1 достает из чемоданчика {RОГРОМНЫЙ СКАЛЬПЕЛЬ{x и отрезает голову {Y$C3{x.",ch,NULL,victim,TO_ROOM);
+
+        // raw_kill() frees the victim, so its name has to be spelled out
+        // while it is still alive - $C2 afterwards printed freed memory
+        if (leaves_corpse)
+          do_printf(body,"Тело {y%s{x мгновенно рассыпается в прах.",
+            get_char_desc(victim,'2'));
+
         raw_kill(victim);
-        if (!IS_SET(victim->act,ACT_EXTRACT_CORPSE))
+
+        if (leaves_corpse)
         {
-         act("Тело $C2 мгновенно рассыпается в прах.",ch,NULL,victim,TO_ROOM);
-         extract_obj(get_obj_list(ch,"corpse",ch->in_room->contents));
+         OBJ_DATA *corpse;
+
+         act(body,ch,NULL,NULL,TO_ROOM);
+
+         // extract the corpse just made, and only that one: looking it up
+         // by the "corpse" keyword also finds player corpses lying here
+         for (corpse=ch->in_room->contents;corpse;corpse=corpse->next_content)
+           if (corpse->item_type == ITEM_CORPSE_NPC) break;
+         if (corpse != NULL) extract_obj(corpse);
         }
        }
      }
@@ -1309,7 +1327,7 @@ void aggr_update( void )
   CHAR_DATA *wch;
   CHAR_DATA *ch,  *ch_next;
   CHAR_DATA *vch, *vch_next;
-  CHAR_DATA static *wch_next;
+  static CHAR_DATA *wch_next;
   CHAR_DATA *victim;
   AFFECT_DATA af;
 

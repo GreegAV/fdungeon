@@ -2084,7 +2084,7 @@ void do_inform(CHAR_DATA *ch, const char *argument)
 void do_setclass( CHAR_DATA *ch, const char *argument )
 {
   char arg[MAX_INPUT_LENGTH];
-  int  class[4],i;
+  int  class[5],i;  /* indexed 1..4 below */
   bool mag=FALSE;
   bool war=FALSE;
   bool thi=FALSE;

@@ -347,6 +347,7 @@ int64 toggle_int64      ( int64 flag,int64 bit);
 void  info              (CD * ch, int level, int mes, const char *name, const char *fraze);
 void  talk_auction      (char *argument);
 bool  check_parse_name  (const char * name, bool new);
+bool  notify_disabled   (void);
 
 // act_info.c
 void set_title  args( ( CD *ch, const char *title ) );

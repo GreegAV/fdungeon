@@ -2339,10 +2339,10 @@ bool damage(CHAR_DATA *ch, CHAR_DATA *victim,int dam,int dam_type,int dt,bool sh
       }
     }
 
-    raw_kill( victim );
-    if (IS_CFG(ch,CFG_AUTOLOOK)) do_look(ch,"in corpse");
-
-    if (ch != victim && victim->criminal>0)
+    // Has to happen before raw_kill(): that frees an NPC victim outright,
+    // and a player victim is saved and moved away by it. PLR_WANTED and
+    // the criminal counter only mean anything for players anyway.
+    if (!IS_NPC(victim) && ch != victim && victim->criminal>0)
     {
       if (!IS_NPC(ch) || ch->spec_fun==spec_lookup("spec_executioner"))
         victim->criminal-=200;
@@ -2355,6 +2355,9 @@ bool damage(CHAR_DATA *ch, CHAR_DATA *victim,int dam,int dam_type,int dt,bool sh
         stc("{YТы больше не в розыске.{x\n\r",victim);
       }
     }
+
+    raw_kill( victim );
+    if (IS_CFG(ch,CFG_AUTOLOOK)) do_look(ch,"in corpse");
     // RT new auto commands
     if (!IS_NPC(ch)
       &&  (corpse = get_obj_list(ch,"corpse",ch->in_room->contents)) != NULL
@@ -2964,7 +2967,7 @@ void make_corpse( CHAR_DATA *ch )
   {
     if (IS_SET(ch->act, ACT_EXTRACT_CORPSE))
     {
-      act( "Мертвое тело мгновенно рассыпается в прах.", ch, 0, 0,TO_ROOM);
+      act( "Тело $c2 мгновенно рассыпается в прах.", ch, 0, 0,TO_ROOM);
       return;
     }
     corpse              = create_object(get_obj_index(OBJ_VNUM_CORPSE_NPC), 0);

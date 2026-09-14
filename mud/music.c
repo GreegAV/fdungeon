@@ -125,7 +125,6 @@ void load_songs(void)
   if ((fp = fopen(MUSIC_FILE,"r")) == NULL)
   {
     bug("Couldn't open music file, no songs available.",0);
-    fclose(fp);
     return;
   }
 

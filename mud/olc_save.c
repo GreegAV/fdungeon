@@ -23,7 +23,7 @@ char *fix_string( const char *str )
   static char strfix[MAX_STRING_LENGTH];
   int i, o;
 
-  if ( !str ) return '\0';
+  if ( !str ) return NULL;
   for ( o = i = 0; str[i+o] != '\0'; i++ )
   {
     if (str[i+o] == '\r' || str[i+o] == '~') o++;

@@ -526,7 +526,7 @@ void fread_char (CHAR_DATA * ch, FILE * fp)
   ch->vic_npc = ch->death_npc = ch->vic_pc_total =
   ch->death_pc_total = ch->vic_pc_arena = ch->death_pc_arena = 0;
 
-  ch->pcdata->auto_online = '\0';
+  ch->pcdata->auto_online = NULL;
   ch->pcdata->deathcounter = 0;
   ch->host = NULL;
   ch->deity = NULL;

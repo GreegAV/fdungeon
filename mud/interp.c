@@ -722,6 +722,8 @@ bool is_number ( const char *arg )
 }
 
 // Given a string like 14.foo, return 14 and 'foo'
+/* arg must be at least MAX_INPUT_LENGTH bytes: the tail of argument is copied
+   into it unchecked */
 int number_argument( char *argument, char *arg )
 {
  char *pdot;

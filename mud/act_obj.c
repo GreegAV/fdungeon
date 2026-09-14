@@ -2341,7 +2341,7 @@ void do_sacrifice( CHAR_DATA *ch, const char *argument)
   char arg[MAX_INPUT_LENGTH];
   OBJ_DATA *obj;
   bool found, isOne=TRUE;
-  char objname[50];
+  char objname[MAX_INPUT_LENGTH];
   OBJ_DATA *tobj;
   int position = 0, count = 0;
   int same = 1;
@@ -2361,13 +2361,14 @@ void do_sacrifice( CHAR_DATA *ch, const char *argument)
     return;
   }
 
-  memset(objname,0,50);
+  memset(objname,0,sizeof(objname));
 
+  /* arg and objname are both MAX_INPUT_LENGTH, so these copies cannot overflow */
   if (!str_cmp(arg, "all")) strcpy(objname, "all");
-  else if (!str_prefix("all.", arg)) strncpy(objname, &arg[4], 49);
+  else if (!str_prefix("all.", arg)) strcpy(objname, &arg[4]);
   else position = number_argument(arg, objname);
 
-  objname[49] = '\0';
+  objname[sizeof(objname)-1] = '\0';
 
   found = 0;
 

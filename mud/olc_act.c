@@ -3205,9 +3205,9 @@ OEDIT( oedit_material )
   if( (pObj->material = str_dup( material_lookup(argument)) ) == NULL )
    pObj->material = material_table[MATERIAL_NONE].name;
 
-  if( str_cmp( get_obj_cond( (OBJ_DATA *)pObj, 0), SHOW_COND_ETERNAL)
-   || pObj->durability != -1 );
-  pObj->condition = pObj->durability = material_table[material_num(pObj->material)].d_dam;
+  /* eternal items (durability -1) keep their condition when material changes */
+  if( pObj->durability != -1 )
+    pObj->condition = pObj->durability = material_table[material_num(pObj->material)].d_dam;
 
   if( pObj->condition > pObj->durability ) pObj->condition = pObj->durability;
 
